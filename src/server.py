@@ -54,15 +54,6 @@ EXAMPLE USAGE:
    Returns: relevant documentation chunks with similarity scores"""
 )
 
-# Add a simple health check endpoint
-@mcp.app.get("/")
-async def health_check():
-    return {"status": "healthy", "service": "documentation-mcp-server"}
-
-@mcp.app.get("/health")
-async def health():
-    return {"status": "healthy", "service": "documentation-mcp-server"}
-
 # Global state
 processing_jobs: Dict[str, Dict[str, Any]] = {}
 vector_dbs: Dict[str, ChromaVectorDB] = {}
