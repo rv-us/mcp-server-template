@@ -7,7 +7,7 @@ services:
     startCommand: python src/server.py
     envVars:
       - key: PYTHON_VERSION
-        value: 3.12
+        value: 3.11.11
       - key: GROQ_API_KEY
         sync: false  # Set this in Render dashboard
       - key: BRIGHTDATA_API_KEY
