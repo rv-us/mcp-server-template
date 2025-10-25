@@ -1,11 +1,15 @@
 services:
   - type: web
-    name: fastmcp-server
+    name: documentation-mcp-server
     runtime: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: python src/server.py
-    plan: free
-    autoDeploy: false
     envVars:
-      - key: ENVIRONMENT
-        value: production
+      - key: PYTHON_VERSION
+        value: 3.12
+      - key: GROQ_API_KEY
+        sync: false  # Set this in Render dashboard
+      - key: BRIGHTDATA_API_KEY
+        sync: false  # Set this in Render dashboard
+

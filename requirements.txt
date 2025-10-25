@@ -1,2 +1,25 @@
-fastmcp>=2.12.0
-uvicorn>=0.35.0
+# Core dependencies
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# FastMCP and MCP
+fastmcp>=2.13.0
+mcp>=1.19.0
+pydantic>=2.0.0
+anyio>=4.0.0
+
+# Vector database and embeddings
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+torch>=2.0.0
+
+# Web scraping and parsing
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+brightdata-sdk>=1.0.0
+
+# Groq API
+groq>=0.4.0
+
+# Additional utilities
+tqdm>=4.65.0
