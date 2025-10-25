@@ -355,7 +355,10 @@ async def list_collections() -> str:
 
 
 if __name__ == "__main__":
-    # Run the server on localhost:8000
-    logger.info("🚀 Starting Documentation MCP Server on http://localhost:8000/mcp")
-    mcp.run(transport="streamable-http", host="localhost", port=8000)
+    # Get port from environment variable or default to 8000
+    port = int(os.environ.get("PORT", 8000))
+    
+    # Run the server on all interfaces (0.0.0.0) for Render deployment
+    logger.info(f"🚀 Starting Documentation MCP Server on http://0.0.0.0:{port}/mcp")
+    mcp.run(transport="streamable-http", host="0.0.0.0", port=port)
 
