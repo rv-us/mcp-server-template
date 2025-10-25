@@ -54,6 +54,15 @@ EXAMPLE USAGE:
    Returns: relevant documentation chunks with similarity scores"""
 )
 
+# Add a simple health check endpoint
+@mcp.app.get("/")
+async def health_check():
+    return {"status": "healthy", "service": "documentation-mcp-server"}
+
+@mcp.app.get("/health")
+async def health():
+    return {"status": "healthy", "service": "documentation-mcp-server"}
+
 # Global state
 processing_jobs: Dict[str, Dict[str, Any]] = {}
 vector_dbs: Dict[str, ChromaVectorDB] = {}
@@ -360,5 +369,13 @@ if __name__ == "__main__":
     
     # Run the server on all interfaces (0.0.0.0) for Render deployment
     logger.info(f"🚀 Starting Documentation MCP Server on http://0.0.0.0:{port}/mcp")
-    mcp.run(transport="streamable-http", host="0.0.0.0", port=port)
+    logger.info(f"Environment PORT: {os.environ.get('PORT', 'not set')}")
+    logger.info(f"Using port: {port}")
+    
+    try:
+        # Start the server and keep it running
+        mcp.run(transport="streamable-http", host="0.0.0.0", port=port)
+    except Exception as e:
+        logger.error(f"Failed to start server: {e}")
+        raise
 
