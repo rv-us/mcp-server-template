@@ -342,7 +342,7 @@ async def test_groq_api() -> str:
         # Get API key from environment
         groq_api_key = os.getenv("GROK")
         if not groq_api_key:
-            return "❌ GROQ_API_KEY not found in environment variables"
+            return "❌ GROK not found in environment variables"
         
         # Initialize Groq client
         groq_client = Groq(api_key=groq_api_key)
@@ -391,9 +391,9 @@ async def test_brightdata_api() -> str:
         logger.info("Testing BrightData API connectivity...")
         
         # Get API key from environment
-        brightdata_api_key = os.getenv("BRIGHTDATA_API_KEY")
+        brightdata_api_key = os.getenv("BRIGHT_DATA_API_TOKEN")
         if not brightdata_api_key:
-            return "❌ BRIGHTDATA_API_KEY not found in environment variables"
+            return "❌ BRIGHT_DATA_API_TOKEN not found in environment variables"
         
         # Test with a simple HTTP request through BrightData proxy
         # Using BrightData's proxy endpoint format
