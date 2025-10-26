@@ -323,6 +323,117 @@ async def load_embedding_model() -> str:
 
 
 @mcp.tool()
+async def test_groq_api() -> str:
+    """Test Groq API connectivity and response.
+    
+    This tool makes a simple test request to Groq API to verify:
+    - API key is valid
+    - API is accessible
+    - Response is working correctly
+    
+    Returns:
+        Success message with API info, or error message if test fails
+    """
+    try:
+        from groq import Groq
+        
+        logger.info("Testing Groq API connectivity...")
+        
+        # Get API key from environment
+        groq_api_key = os.getenv("GROQ_API_KEY")
+        if not groq_api_key:
+            return "❌ GROQ_API_KEY not found in environment variables"
+        
+        # Initialize Groq client
+        groq_client = Groq(api_key=groq_api_key)
+        
+        # Make a simple test request
+        response = groq_client.chat.completions.create(
+            messages=[{
+                "role": "user", 
+                "content": "Say 'Hello, Groq API is working!' and nothing else."
+            }],
+            model="llama-3.3-70b-versatile",
+            max_tokens=50
+        )
+        
+        result_text = response.choices[0].message.content.strip()
+        
+        logger.info(f"Groq API test successful: {result_text}")
+        
+        return (f"✅ Groq API test successful!\n\n"
+                f"API Key: {'*' * 20}{groq_api_key[-4:]}\n"
+                f"Model: llama-3.3-70b-versatile\n"
+                f"Response: {result_text}\n"
+                f"API is ready for use!")
+        
+    except Exception as e:
+        error_msg = f"❌ Groq API test failed: {str(e)}"
+        logger.error(error_msg)
+        return error_msg
+
+
+@mcp.tool()
+async def test_brightdata_api() -> str:
+    """Test BrightData API connectivity and response.
+    
+    This tool makes a simple test request to BrightData API to verify:
+    - API key is valid
+    - API is accessible
+    - Proxy service is working
+    
+    Returns:
+        Success message with API info, or error message if test fails
+    """
+    try:
+        import requests
+        
+        logger.info("Testing BrightData API connectivity...")
+        
+        # Get API key from environment
+        brightdata_api_key = os.getenv("BRIGHTDATA_API_KEY")
+        if not brightdata_api_key:
+            return "❌ BRIGHTDATA_API_KEY not found in environment variables"
+        
+        # Test with a simple HTTP request through BrightData proxy
+        # Using BrightData's proxy endpoint format
+        proxy_url = f"http://brd-customer-hl_{brightdata_api_key}:brd-customer-hl_{brightdata_api_key}@brd.superproxy.io:22225"
+        
+        proxies = {
+            "http": proxy_url,
+            "https": proxy_url
+        }
+        
+        # Make a test request to a simple endpoint
+        test_url = "http://httpbin.org/ip"
+        
+        response = requests.get(
+            test_url,
+            proxies=proxies,
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            result_data = response.json()
+            ip_address = result_data.get("origin", "Unknown")
+            
+            logger.info(f"BrightData API test successful: IP {ip_address}")
+            
+            return (f"✅ BrightData API test successful!\n\n"
+                    f"API Key: {'*' * 20}{brightdata_api_key[-4:]}\n"
+                    f"Proxy IP: {ip_address}\n"
+                    f"Status Code: {response.status_code}\n"
+                    f"Proxy service is ready for use!")
+        else:
+            return f"❌ BrightData API test failed: HTTP {response.status_code} - {response.text}"
+        
+    except Exception as e:
+        error_msg = f"❌ BrightData API test failed: {str(e)}"
+        logger.error(error_msg)
+        return error_msg
+
+
+@mcp.tool()
 async def initialize_chromadb(collection_name: str = "test_collection") -> str:
     """Initialize ChromaDB and test basic operations.
     
