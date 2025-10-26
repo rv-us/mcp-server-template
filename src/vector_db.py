@@ -7,11 +7,12 @@ from chromadb.config import Settings
 
 class VectorDB(ABC):
     def __init__(self):
-        self.model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
+        # Use smaller, more memory-efficient model for free tier
+        self.model = SentenceTransformer("all-MiniLM-L6-v2")
 
     def get_text_embedding(self, text: List[str]):
         """
-        Given a text document, returns a vector embedding using a Qwen model.
+        Given a text document, returns a vector embedding using all-MiniLM-L6-v2 model.
         """
         return self.model.encode(text)
 

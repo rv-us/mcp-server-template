@@ -303,7 +303,7 @@ async def load_embedding_model() -> str:
         from sentence_transformers import SentenceTransformer
         
         logger.info("Loading embedding model...")
-        model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
+        model = SentenceTransformer("all-MiniLM-L6-v2")
         
         # Test the model with a sample
         test_text = ["This is a test sentence for embedding."]
@@ -312,7 +312,7 @@ async def load_embedding_model() -> str:
         logger.info(f"Model loaded successfully - embedding shape: {embedding.shape}")
         
         return (f"✅ Embedding model loaded successfully!\n\n"
-                f"Model: Qwen/Qwen3-Embedding-0.6B\n"
+                f"Model: all-MiniLM-L6-v2\n"
                 f"Test embedding shape: {embedding.shape}\n"
                 f"Model ready for use!")
         
