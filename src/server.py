@@ -290,6 +290,114 @@ async def get_processing_status(job_id: str) -> str:
 
 
 @mcp.tool()
+async def load_embedding_model() -> str:
+    """Load the embedding model and verify it's working.
+    
+    This tool loads the sentence transformer model and tests it with a sample embedding.
+    Useful for debugging model loading issues on different platforms.
+    
+    Returns:
+        Success message with model info, or error message if loading fails
+    """
+    try:
+        from sentence_transformers import SentenceTransformer
+        
+        logger.info("Loading embedding model...")
+        model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
+        
+        # Test the model with a sample
+        test_text = ["This is a test sentence for embedding."]
+        embedding = model.encode(test_text)
+        
+        logger.info(f"Model loaded successfully - embedding shape: {embedding.shape}")
+        
+        return (f"✅ Embedding model loaded successfully!\n\n"
+                f"Model: Qwen/Qwen3-Embedding-0.6B\n"
+                f"Test embedding shape: {embedding.shape}\n"
+                f"Model ready for use!")
+        
+    except Exception as e:
+        error_msg = f"❌ Failed to load embedding model: {str(e)}"
+        logger.error(error_msg)
+        return error_msg
+
+
+@mcp.tool()
+async def initialize_chromadb(collection_name: str = "test_collection") -> str:
+    """Initialize ChromaDB and test basic operations.
+    
+    This tool creates a ChromaDB instance and tests basic operations like
+    creating a collection, inserting documents, and querying.
+    
+    Args:
+        collection_name: Name for the test collection (default: "test_collection")
+    
+    Returns:
+        Success message with DB info, or error message if initialization fails
+    """
+    try:
+        import chromadb
+        from chromadb.config import Settings
+        
+        logger.info(f"Initializing ChromaDB with collection: {collection_name}")
+        
+        # Try persistent client first
+        try:
+            client = chromadb.PersistentClient(
+                path="./chroma_db",
+                settings=Settings(anonymized_telemetry=False)
+            )
+            logger.info("ChromaDB PersistentClient initialized")
+        except Exception as e:
+            logger.warning(f"PersistentClient failed: {e}, falling back to in-memory")
+            client = chromadb.Client(Settings(anonymized_telemetry=False))
+            logger.info("ChromaDB in-memory client initialized")
+        
+        # Create or get collection
+        collection = client.get_or_create_collection(collection_name)
+        
+        # Test basic operations
+        test_doc = "This is a test document for ChromaDB initialization."
+        test_id = "test_doc_1"
+        
+        # Insert test document
+        collection.add(
+            documents=[test_doc],
+            ids=[test_id]
+        )
+        
+        # Query test document
+        results = collection.query(
+            query_texts=["test document"],
+            n_results=1
+        )
+        
+        # Verify results
+        if results['documents'] and len(results['documents'][0]) > 0:
+            retrieved_doc = results['documents'][0][0]
+            if retrieved_doc == test_doc:
+                logger.info("ChromaDB test operations successful")
+                
+                # Clean up test document
+                collection.delete(ids=[test_id])
+                
+                return (f"✅ ChromaDB initialized successfully!\n\n"
+                        f"Collection: {collection_name}\n"
+                        f"Client type: {'Persistent' if 'PersistentClient' in str(type(client)) else 'In-memory'}\n"
+                        f"Test operations: ✅ Passed\n"
+                        f"Database ready for use!")
+            else:
+                return f"❌ ChromaDB test failed: Retrieved document doesn't match"
+        else:
+            return f"❌ ChromaDB test failed: No documents retrieved"
+            
+    except Exception as e:
+        error_msg = f"❌ Failed to initialize ChromaDB: {str(e)}"
+        logger.error(error_msg)
+        return error_msg
+
+
+@mcp.tool()
 async def list_collections() -> str:
     """List all available documentation collections that can be queried.
     
