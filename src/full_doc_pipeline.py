@@ -169,7 +169,7 @@ def run_full_pipeline(documentation_url: str, max_urls: int = 20,
         print()
     
     # Initialize Groq client
-    groq_api_key = os.getenv("Grok")
+    groq_api_key = os.getenv("GROK")
     if not groq_api_key:
         print("❌ Grok API key not found in environment variables.")
         return
