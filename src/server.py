@@ -340,7 +340,7 @@ async def test_groq_api() -> str:
         logger.info("Testing Groq API connectivity...")
         
         # Get API key from environment
-        groq_api_key = os.getenv("GROQ_API_KEY")
+        groq_api_key = os.getenv("GROK")
         if not groq_api_key:
             return "❌ GROQ_API_KEY not found in environment variables"
         
